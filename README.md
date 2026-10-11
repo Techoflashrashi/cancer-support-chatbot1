@@ -4,7 +4,7 @@ A working prototype of a plain-language information assistant for families of ch
 
 It runs entirely in the browser from a curated local knowledge base. It needs no API key, account, server, database or internet connection (fonts load from Google Fonts when online and fall back to system fonts offline).
 
-**This is an independent prototype.** It is not affiliated with or endorsed by Tata Memorial Centre or any other organisation, has not been clinically validated or reviewed by doctors, and has not been used with patients. It gives general educational information only.
+**This is an independent prototype.** It is not affiliated with or endorsed by any organisation, has not been clinically validated or reviewed by doctors, and has not been used with patients. It gives general educational information only.
 
 ---
 
