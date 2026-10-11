@@ -1,0 +1,20 @@
+[
+  "src/data/sources.js",
+  "src/data/categories.js",
+  "src/data/topics-understanding.js",
+  "src/data/topics-diagnosis.js",
+  "src/data/topics-cancer-types.js",
+  "src/data/topics-treatment.js",
+  "src/data/topics-hospital.js",
+  "src/data/topics-side-effects.js",
+  "src/data/topics-daily-life.js",
+  "src/data/topics-paperwork.js",
+  "src/data/topics-family.js",
+  "src/data/topics-urgent.js",
+  "src/data/glossary.js",
+  "src/data/checklist.js",
+  "src/engine/text.js",
+  "src/engine/safety.js",
+  "src/engine/retrieval.js",
+  "src/engine/responder.js"
+]

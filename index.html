@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cancer Support Chatbot</title>
+<meta name="description" content="Plain-language information about childhood cancer for families. A prototype that answers from a curated local knowledge base.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!-- BUILD:CSS -->
+<link rel="stylesheet" href="styles/app.css">
+<!-- /BUILD:CSS -->
+</head>
+<body>
+<!-- BUILD:BODY -->
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="Navigation">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="9" fill="var(--teal)"></rect>
+        <path d="M9 21.5c0-4.7 3.6-8.5 8-8.5s8 3.8 8 8.5" fill="none" stroke="var(--on-teal)" stroke-width="2.2" stroke-linecap="round"></path>
+        <circle cx="17" cy="9.5" r="2.6" fill="var(--accent)"></circle>
+        <path d="M9 24.5h16" stroke="var(--on-teal)" stroke-width="2.2" stroke-linecap="round"></path>
+      </svg>
+      <div>
+        <div class="brand-name">Cancer Support Chatbot</div>
+        <div class="brand-sub">Plain-language information for families of children with cancer</div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Main">
+      <div class="nav-label">Use</div>
+      <button class="nav-item" data-view="chat" type="button"><span data-icon="chat"></span>Conversation</button>
+      <button class="nav-item" data-view="library" type="button"><span data-icon="book"></span>Topic library</button>
+      <button class="nav-item" data-view="glossary" type="button"><span data-icon="az"></span>Glossary</button>
+      <button class="nav-item" data-view="checklist" type="button"><span data-icon="check"></span>Appointment checklist<span class="count" id="checkCount" hidden>0</span></button>
+    </nav>
+    <nav class="nav" aria-label="About this project">
+      <div class="nav-label">This project</div>
+      <button class="nav-item" data-view="about" type="button"><span data-icon="info"></span>About</button>
+      <button class="nav-item" data-view="how" type="button"><span data-icon="cog"></span>How it works</button>
+    </nav>
+
+    <div class="help-box" role="note">
+      <div><strong>Is your child unwell right now?</strong> During treatment, contact their treating team. In an emergency, call <strong>112</strong> in India, or your local emergency number.</div>
+      <button type="button" id="urgentLink">When to call the team urgently</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn ghost menu-btn" type="button" id="menuBtn" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><span data-icon="menu"></span></button>
+      <h1 id="viewTitle" tabindex="-1">Conversation</h1>
+      <button class="icon-btn" type="button" id="newChatBtn"><span data-icon="plus"></span><span class="new-label">New conversation</span><span class="sr-only">Start a new conversation</span></button>
+    </header>
+
+    <main id="main" class="view-host" tabindex="-1">
+      <!-- Conversation -->
+      <section class="view" id="view-chat" aria-labelledby="viewTitle">
+        <div class="chat">
+          <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation">
+            <div class="log-inner" id="logInner"></div>
+          </div>
+          <div class="composer-wrap">
+            <div class="composer">
+              <form id="composer" autocomplete="off">
+                <label for="input" class="sr-only">Type your question</label>
+                <textarea id="input" rows="1" maxlength="1000" placeholder="Type your question" aria-describedby="disclaimer"></textarea>
+                <button class="send-btn" type="submit" id="sendBtn"><span data-icon="send"></span><span>Send</span></button>
+              </form>
+              <p class="disclaimer" id="disclaimer">General information from a curated library, not medical advice. It does not replace your child's care team. Nothing you type leaves this device.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Library -->
+      <section class="view" id="view-library" hidden>
+        <div class="page">
+          <div>
+            <h2>Topic library</h2>
+            <p class="page-intro">Every topic this assistant knows about, grouped by area. Choose a topic to read it in the conversation, where you can ask follow-up questions.</p>
+          </div>
+          <div class="search">
+            <span data-icon="search"></span>
+            <label for="libSearch" class="sr-only">Filter topics</label>
+            <input id="libSearch" type="search" placeholder="Filter topics, for example: hair, fever, school">
+          </div>
+          <nav class="cat-jump" id="catJump" aria-label="Jump to a category"></nav>
+          <div id="libList" class="flow-list" style="display:flex;flex-direction:column;gap:26px"></div>
+        </div>
+      </section>
+
+      <!-- Glossary -->
+      <section class="view" id="view-glossary" hidden>
+        <div class="page">
+          <div>
+            <h2>Glossary</h2>
+            <p class="page-intro">Medical words explained in plain language. These are general meanings. Your child's team can explain what a word means for your child.</p>
+          </div>
+          <div class="search">
+            <span data-icon="search"></span>
+            <label for="glossSearch" class="sr-only">Search the glossary</label>
+            <input id="glossSearch" type="search" placeholder="Search a word, for example: platelets, LP, remission">
+          </div>
+          <nav class="az" id="az" aria-label="Jump to a letter"></nav>
+          <div id="glossList" style="display:flex;flex-direction:column;gap:18px"></div>
+        </div>
+      </section>
+
+      <!-- Checklist -->
+      <section class="view" id="view-checklist" hidden>
+        <div class="page">
+          <div>
+            <h2>Appointment checklist</h2>
+            <p class="page-intro">Tick the questions you want to ask at your next appointment, add your own, then copy the list into your phone notes or a message. Put your most important questions first.</p>
+          </div>
+          <div class="check-summary">
+            <span class="n" id="checkSummary" aria-live="polite">No questions chosen yet</span>
+            <button class="text-btn primary" type="button" id="copyChecklist"><span data-icon="copy"></span>Copy my list</button>
+            <button class="text-btn" type="button" id="clearChecklist">Clear ticks</button>
+          </div>
+          <div id="checkGroups" style="display:flex;flex-direction:column;gap:22px"></div>
+          <div class="check-group">
+            <h3>Add your own question</h3>
+            <form class="add-row" id="addQuestionForm">
+              <label for="ownQuestion" class="sr-only">Your question</label>
+              <input id="ownQuestion" type="text" maxlength="240" placeholder="For example: Can my child go to a wedding next month?">
+              <button class="text-btn" type="submit"><span data-icon="plus"></span>Add</button>
+            </form>
+          </div>
+          <label class="storage-opt" for="persistToggle">
+            <input type="checkbox" id="persistToggle">
+            <span><strong>Keep this checklist on this device.</strong> Off by default. When on, your ticked and added questions are saved only in this browser so they are still here next time. Turning it off deletes the saved copy. Your conversation is never saved.</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section class="view" id="view-about" hidden>
+        <div class="page">
+          <div>
+            <h2>About this project</h2>
+            <p class="page-intro">A prototype information tool that helps families of children with cancer understand the medical information they receive, one question at a time.</p>
+          </div>
+          <div class="panel">
+            <h3>Why it exists</h3>
+            <p>This project began with time spent volunteering with children receiving cancer treatment at Tata Memorial Hospital in India. Families were often given a great deal of complex information at once: new medical words, treatment plans, unfamiliar procedures and uncertainty about what comes next. Under stress, much of it was hard to take in.</p>
+            <p>The idea is simple: a calm, private place where a parent, caregiver or older child can ask a question in their own words and get a short, clear explanation, plus good questions to take back to their care team.</p>
+            <p id="creditLine">The concept and conversational framework were initiated by the project's Technical Lead, who also designed and built this prototype.</p>
+          </div>
+          <div class="panel">
+            <h3>What it is, and what it is not</h3>
+            <ul>
+              <li>It is an <strong>independent prototype</strong>. It is not affiliated with, endorsed by, or used at Tata Memorial Centre or any other hospital or organisation.</li>
+              <li>It has <strong>not been clinically validated</strong>, has not been reviewed by doctors for this prototype, and has not been used with patients.</li>
+              <li>It gives <strong>general educational information only</strong>. It does not diagnose, interpret individual results, estimate prognosis, recommend treatment changes or give medicine doses.</li>
+              <li>It is meant to <strong>support conversations with the care team</strong>, never to replace them.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Where the information comes from</h3>
+            <p>Content is written in plain language and summarised in our own words from public education material by the National Cancer Institute, the American Cancer Society, St. Jude Children's Research Hospital (Together by St. Jude), the World Health Organization and Tata Memorial Centre. Each answer lists the sources it draws on. Every link was opened and checked on <span id="checkedOn"></span>. These organisations do not endorse this project.</p>
+          </div>
+          <div class="panel">
+            <h3>Privacy</h3>
+            <ul>
+              <li>No login, no registration and no tracking or analytics.</li>
+              <li>Questions are answered inside your browser. Nothing you type is sent to a server.</li>
+              <li>The conversation is not saved. Starting a new conversation or closing the page clears it.</li>
+              <li>The appointment checklist is saved on this device only if you choose to turn that on.</li>
+              <li>This prototype is not a medical record system and does not claim to meet healthcare privacy standards.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="view" id="view-how" hidden>
+        <div class="page">
+          <div>
+            <h2>How it works</h2>
+            <p class="page-intro">A technical overview for reviewers. The family-facing conversation does not show any of this unless you turn on match details below.</p>
+          </div>
+          <div class="stats" id="stats"></div>
+          <div class="panel">
+            <h3>Architecture</h3>
+            <p>A local-first web app written in plain JavaScript with no build step and no runtime dependencies. Content, matching, safety rules and interface are separate files:</p>
+            <ul>
+              <li><code>src/data/</code> knowledge base: topics with short answers, optional details, FAQs, questions for the care team, follow-ups and source ids; a glossary; a source registry; the checklist question bank.</li>
+              <li><code>src/engine/text.js</code> normalisation, British and Indian English spellings, common misspellings, everyday phrases mapped to medical terms, light stemming, edit distance.</li>
+              <li><code>src/engine/safety.js</code> rule-based safety classifier that runs before any retrieval.</li>
+              <li><code>src/engine/retrieval.js</code> weighted, IDF-scored retrieval over topics and FAQs.</li>
+              <li><code>src/engine/responder.js</code> decision order, confidence checks, response objects, plain-text copy.</li>
+              <li><code>src/ui/</code> rendering and interaction.</li>
+            </ul>
+            <p>It does <strong>not</strong> use a large language model, machine learning or embeddings. Every answer is curated text selected by deterministic rules, which makes behaviour predictable and testable.</p>
+          </div>
+          <div class="panel">
+            <h3>What happens to a message</h3>
+            <div class="flow">
+              <div class="flow-step"><span class="n">1</span><div><h4>Normalise</h4><p>Lower-case, expand contractions, fix known misspellings ("biospy", "leukaemia"), and map everyday phrases to knowledge-base terms ("hair fall" to hair loss, "throwing up" to vomiting).</p></div></div>
+              <div class="flow-step"><span class="n">2</span><div><h4>Safety check</h4><p>Crisis language, emergencies and urgent symptoms described as happening now take over the reply with a short, direct message. Requests for diagnosis, interpretation of results, prognosis, treatment decisions or doses get a boundary reply that explains why and offers questions for the team.</p></div></div>
+              <div class="flow-step"><span class="n">3</span><div><h4>Intents and definitions</h4><p>Greetings, "who are you", privacy questions, "tell me more" and "open the glossary" are handled directly. "What does X mean" checks the glossary first.</p></div></div>
+              <div class="flow-step"><span class="n">4</span><div><h4>Score every topic and FAQ</h4><p>Weighted keyword overlap using IDF, cosine similarity with curated question variants, phrase bonuses and fuzzy matching for misspellings. Short follow-ups borrow the previous topic's terms.</p></div></div>
+              <div class="flow-step"><span class="n">5</span><div><h4>Decide how confident to be</h4><p>A low score, or a match only on incidental words, gives an honest "I'm not sure" with nearby topics. Two close matches give a clarifying question. Otherwise the best answer is shown, essentials first, with details folded away.</p></div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Scoring weights</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Signal</th><th>Weight</th><th>Why</th></tr></thead>
+                <tbody>
+                  <tr><td>Keyword match</td><td class="mono">2.5 &times; IDF</td><td>Curated terms an author marked as central to the topic.</td></tr>
+                  <tr><td>Title word</td><td class="mono">1.5 &times; IDF</td><td>Topic titles are short and specific.</td></tr>
+                  <tr><td>Question-variant word</td><td class="mono">1.0 &times; IDF</td><td>Words from alternative ways of asking.</td></tr>
+                  <tr><td>Summary word</td><td class="mono">0.5 &times; IDF</td><td>Weak supporting evidence.</td></tr>
+                  <tr><td>Best variant similarity</td><td class="mono">4 &times; cosine</td><td>Rewards questions phrased like a known variant.</td></tr>
+                  <tr><td>Phrase intact</td><td class="mono">+1.5</td><td>"hair loss" counts more than "hair" and "loss" apart.</td></tr>
+                  <tr><td>Fuzzy correction</td><td class="mono">&times; 0.7</td><td>Close misspellings match at reduced weight.</td></tr>
+                  <tr><td>Follow-up context</td><td class="mono">0.5 &times; terms, +1.0 topic</td><td>"Does it hurt?" after chemotherapy stays on chemotherapy.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>An answer needs a score of at least <span class="mono" id="cfgMin"></span> and at least one match on a keyword or title word. A second topic scoring within <span class="mono" id="cfgRatio"></span> of the first triggers a clarifying question, unless the first is already a strong match.</p>
+          </div>
+          <div class="panel">
+            <h3>Safety tiers</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Tier</th><th>Example</th><th>Response</th></tr></thead>
+                <tbody>
+                  <tr><td>Crisis</td><td>"I want to die"</td><td>Support message, 112 and Tele-MANAS 14416. No other content.</td></tr>
+                  <tr><td>Emergency</td><td>"She is not breathing"</td><td>Call emergency services first line, then the team.</td></tr>
+                  <tr><td>Urgent</td><td>"My son has a fever"</td><td>Cannot assess; contact the treating team now; emergency route. No long explanation underneath.</td></tr>
+                  <tr><td>Boundary</td><td>"Will my child survive?"</td><td>Explains the limit, gives general context and questions to ask the team.</td></tr>
+                  <tr><td>Banner</td><td>"Why is fever dangerous during chemo?"</td><td>Normal educational answer with a short urgent-help note on top.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>Symptom words in a general question do not trigger a takeover, and past events ("had a fever last week") add a banner instead. The rules are cautious but cannot catch everything, which is why the interface always points to the treating team.</p>
+          </div>
+          <div class="panel">
+            <h3>Match inspector</h3>
+            <label class="toggle-row" for="debugToggle">
+              <input type="checkbox" id="debugToggle">
+              <span>Show match details under each answer: safety tier, normalised tokens, fuzzy corrections and the top candidate scores. Useful for reviewing how a question was understood.</span>
+            </label>
+          </div>
+          <div class="panel">
+            <h3>Testing</h3>
+            <p>An automated suite (<code>node tests/engine.test.js</code>) checks the required example questions, synonyms and misspellings, unknown and ambiguous questions, urgent and emergency reports, crisis language, unsafe personal requests, privacy notices, follow-up context, that every suggested follow-up leads to a real answer, that every source is linked and verified, and that content contains no doses or fever thresholds.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div id="toastHost"></div>
+<!-- /BUILD:BODY -->
+<!-- BUILD:JS -->
+<script src="src/data/sources.js"></script>
+<script src="src/data/categories.js"></script>
+<script src="src/data/topics-understanding.js"></script>
+<script src="src/data/topics-diagnosis.js"></script>
+<script src="src/data/topics-cancer-types.js"></script>
+<script src="src/data/topics-treatment.js"></script>
+<script src="src/data/topics-hospital.js"></script>
+<script src="src/data/topics-side-effects.js"></script>
+<script src="src/data/topics-daily-life.js"></script>
+<script src="src/data/topics-paperwork.js"></script>
+<script src="src/data/topics-family.js"></script>
+<script src="src/data/topics-urgent.js"></script>
+<script src="src/data/glossary.js"></script>
+<script src="src/data/checklist.js"></script>
+<script src="src/engine/text.js"></script>
+<script src="src/engine/safety.js"></script>
+<script src="src/engine/retrieval.js"></script>
+<script src="src/engine/responder.js"></script>
+<script src="src/ui/icons.js"></script>
+<script src="src/ui/render.js"></script>
+<script src="src/ui/app.js"></script>
+<!-- /BUILD:JS -->
+</body>
+</html>
